@@ -16,5 +16,6 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('verify-email-first', 'PagesController@verifyEmailFirst');
 
 Route::get('/home', 'HomeController@index');

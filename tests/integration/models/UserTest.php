@@ -26,8 +26,9 @@ class UserTest extends TestCase
 
         $token = User::where('name', 'test1')->first();
 
-
         $this->assertEquals($token->verifyToken, $rtoken);
         $this->assertEquals($token->status, false);
     }
+
+
 }

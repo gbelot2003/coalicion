@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
@@ -28,12 +31,12 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/verify-email-first';
 
     /**
      * Create a new controller instance.
      *
-     * @return void
+     * RegisterController constructor.
      */
     public function __construct()
     {
@@ -69,5 +72,36 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
             'verifyToken' => Str::random(40)
         ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        //$this->guard()->login($user);
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
+    }
+
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered(Request $request, $user)
+    {
+        //
     }
 }
