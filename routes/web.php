@@ -18,4 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 Route::get('verify-email-first', 'PagesController@verifyEmailFirst');
 
-Route::get('/home', 'HomeController@index');
+Route::group(['middleware' => 'statusUser'], function (){
+    Route::get('/home', 'HomeController@index');
+
+});
